@@ -41,8 +41,17 @@
             h1 { font-size: 1.4rem !important; }
             h1 small { font-size: 0.7rem !important; }
             .stats-panel { top: 10px !important; transform: scale(0.85) !important; }
-            .black-hole-stage { height: 280px !important; }
-            .action-btn { min-width: 140px !important; }
+            .black-hole-stage { height: 250px !important; }
+            
+            /* ✨ 修正手機版佈局：將橫排改為直排 */
+            .btn-row { 
+                flex-direction: column !important; 
+                gap: 15px !important; 
+            }
+            .boom-trigger-btn { 
+                position: static !important; /* 解除絕對定位，讓它在下方顯示 */
+                transform: none !important;
+            }
         }
 
         .stats-panel {
@@ -74,7 +83,7 @@
             padding: 0 20px;
         }
 
-        h1 { font-size: 1.8rem; text-align: center; text-shadow: 0 0 15px rgba(255,255,255,0.7); }
+        h1 { font-size: 1.8rem; text-align: center; text-shadow: 0 0 15px rgba(255,255,255,0.7); line-height: 1.3; }
         h1 small { display: block; font-size: 1rem; color: rgba(255, 255, 255, 0.3); margin-top: 8px; text-transform: uppercase; letter-spacing: 2px; }
 
         .input-group { 
@@ -99,6 +108,7 @@
             width: 100%;
             max-width: 500px;
             position: relative;
+            gap: 20px;
         }
 
         .action-btn {
@@ -132,7 +142,6 @@
             border-color: #ff4500;
             background: rgba(255, 69, 0, 0.1);
             color: #fff;
-            transform: translateX(3px);
         }
 
         .btn-en-main { font-size: 0.6rem; opacity: 0.8; text-transform: uppercase; }
@@ -249,7 +258,6 @@
         const uiLevel = document.getElementById('bh-level'), uiSwallowed = document.getElementById('total-swallowed'), uiParticles = document.getElementById('total-particles');
         const inputZone = document.getElementById('normal-input-zone'), portalZone = document.getElementById('portal-zone'), calmTxt = document.getElementById('calm-txt'), resetBtn = document.getElementById('reset-btn');
 
-        // ✨ 補回結局英文詞彙庫
         const calmPhrases = [
             "「引力載荷已達 100%！黑洞已經被你的煩惱餵到吐了...🤮」<small>Gravity Load 100%! The Black Hole is sick of your worries...</small>",
             "「黑洞表示：『嗝～今天吃了太多垃圾，需要休息一下。』🤫」<small>BH says: 'Burp~ Too much trash today. I need to digest.'</small>",
@@ -281,8 +289,6 @@
                 currentLevel = targetLevel; currentBhSize += 6;
                 blackHoleCore.style.setProperty('--bh-size', `${currentBhSize}px`);
                 uiLevel.innerText = `LV. ${currentLevel}`;
-                
-                // ✨ 補回升級英文文字
                 const lvText = document.createElement('div'); 
                 lvText.className = 'level-up-text'; 
                 lvText.innerHTML = `進化！LV.${currentLevel}<small>BH EVOLVED!</small>`; 
