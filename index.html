@@ -32,8 +32,7 @@
             align-items: center;
             width: 100%;
             height: 100%;
-            /* ✨ 改用動態間距：電腦版較大，手機版會透過下方的 @media 自動縮小 */
-            padding-top: 140px; 
+            padding-top: 140px; /* 電腦版 */
         }
 
         .stats-panel {
@@ -96,7 +95,7 @@
         button.action-btn .cn-btn { font-size: 1rem; }
         button.action-btn .en-btn { font-size: 0.6rem; opacity: 0.8; }
 
-        /* ✨ 核心修正：手機版專用 CSS 強制覆蓋 */
+        /* 手機版適配 */
         @media (max-width: 600px) {
             .shake-wrapper { padding-top: 100px !important; }
             h1 { font-size: 1.4rem !important; }
@@ -120,7 +119,47 @@
             transition: all 0.4s ease-out;
         }
 
-        /* 其他原有動畫與 Portal 樣式維持不變... */
+        /* ✨ 特效重新歸位：華麗文字吞噬動畫 */
+        .doom-text {
+            position: absolute;
+            font-size: 2rem;
+            font-weight: 900;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 15;
+            animation: swallow 5.5s forwards cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        @keyframes swallow {
+            0% {
+                transform: translate(var(--start-x), var(--start-y)) rotate(var(--start-rot)) scale(1.2);
+                opacity: 0;
+                filter: blur(5px);
+            }
+            15% { opacity: 1; filter: blur(0px); }
+            50% {
+                transform: translate(calc(var(--start-x) * 0.35), calc(var(--start-y) * 0.35)) rotate(calc(var(--start-rot) + 720deg)) scale(1);
+                opacity: 1;
+            }
+            85% {
+                transform: translate(calc(var(--start-x) * 0.08), calc(var(--start-y) * 0.08)) rotate(calc(var(--start-rot) + 2160deg)) scale(0.6) skewX(20deg);
+                opacity: 0.9;
+                filter: blur(1px);
+            }
+            100% {
+                transform: translate(0, 0) rotate(calc(var(--start-rot) + 3600deg)) scale(0) skewX(45deg);
+                opacity: 0;
+                filter: blur(10px);
+            }
+        }
+
+        .particle { position: absolute; width: 5px; height: 5px; border-radius: 50%; z-index: 16; animation: particle-burst 0.9s forwards ease-out; }
+        @keyframes particle-burst { 0% { transform: translate(0,0) scale(1); opacity: 1; } 100% { transform: translate(var(--end-x), var(--end-y)) scale(0); opacity: 0; } }
+
+        .level-up-text { position: absolute; color: #fff; font-size: 1.8rem; font-weight: bold; text-shadow: 0 0 20px #ff007f; text-align: center; animation: float-up 1.5s forwards ease-out; z-index: 25; }
+        .level-up-text small { display: block; font-size: 0.8rem; opacity: 0.9; }
+        @keyframes float-up { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 20% { transform: translateY(-30px) scale(1.2); opacity: 1; } 100% { transform: translateY(-90px) scale(0.8); opacity: 0; } }
+
         .calm-portal {
             display: none; flex-direction: column; align-items: center;
             background: rgba(10, 10, 25, 0.95); border: 2px solid #ff007f;
@@ -128,23 +167,15 @@
             backdrop-filter: blur(15px); animation: fadeIn 0.8s;
         }
         .link-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
-        .portal-link { padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.05); color: #fff; text-decoration: none; font-size: 0.8rem; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
-        .restart-btn { grid-column: span 2; padding: 12px; border-radius: 15px; background: linear-gradient(45deg, #00b4db, #0083b0); color: #fff; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
-        .cheat-btn { position: absolute; bottom: 10px; right: 10px; background: rgba(138,43,226,0.1); color: rgba(255,255,255,0.3); border: 1px dashed rgba(255,255,255,0.2); padding: 5px; font-size: 10px; cursor: pointer; }
-        .doom-text { position: absolute; font-size: 2rem; font-weight: 900; pointer-events: none; animation: swallow 5.5s forwards; }
-        .particle { position: absolute; width: 4px; height: 4px; border-radius: 50%; animation: particle-burst 0.8s forwards; }
-        .level-up-text { position: absolute; color: #fff; font-size: 1.5rem; font-weight: bold; text-shadow: 0 0 10px #ff007f; text-align: center; animation: float-up 1.5s forwards; }
+        .portal-link { padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.05); color: #fff; text-decoration: none; font-size: 0.85rem; text-align: center; border: 1px solid rgba(255,255,255,0.1); font-weight: bold; }
+        .restart-btn { grid-column: span 2; padding: 12px; border-radius: 15px; background: linear-gradient(45deg, #00b4db, #0083b0); color: #fff; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; font-weight: bold; }
+        
+        .cheat-btn { position: absolute; bottom: 10px; right: 10px; background: rgba(138,43,226,0.1); color: rgba(255,255,255,0.3); border: 1px dashed rgba(255,255,255,0.2); padding: 5px; font-size: 10px; cursor: pointer; z-index: 50; }
+        
+        .apply-shake { animation: screen-shake 0.3s cubic-bezier(.36,.07,.19,.97); }
+        @keyframes screen-shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+        @keyframes distort { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05) rotate(2deg); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes distort { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        @keyframes swallow { 
-            0% { transform: translate(var(--start-x), var(--start-y)) scale(1.2); opacity: 0; }
-            15% { opacity: 1; }
-            100% { transform: translate(0,0) rotate(3600deg) scale(0); opacity: 0; }
-        }
-        @keyframes particle-burst { 0% { transform: translate(0,0); opacity: 1; } 100% { transform: translate(var(--end-x), var(--end-y)); opacity: 0; } }
-        @keyframes float-up { 0% { transform: translateY(0); opacity: 0; } 100% { transform: translateY(-100px); opacity: 0; } }
-        .apply-shake { animation: screen-shake 0.3s; }
-        @keyframes screen-shake { 0% { transform: translate(0,0); } 25% { transform: translate(5px,5px); } 50% { transform: translate(-5px,-5px); } 100% { transform: translate(0,0); } }
     </style>
 </head>
 <body>
@@ -160,13 +191,13 @@
             <div id="normal-input-zone" style="width: 100%; display: flex; flex-direction: column; gap: 15px;">
                 <h1>把一切煩惱，化為星塵徹底攪碎<small>Crush worries into cosmic stardust</small></h1>
                 <div class="input-group">
-                    <input type="text" id="trash-input" placeholder="輸入你想消除的東西 / Enter worries..." maxlength="20">
+                    <input type="text" id="trash-input" placeholder="輸入你想消除的東西... / Enter worries..." maxlength="20">
                     <button id="burn-btn" class="action-btn"><span class="cn-btn">開始吞噬</span><span class="en-btn">Initiate Swallowing</span></button>
                 </div>
             </div>
 
             <div id="portal-zone" class="calm-portal">
-                <div class="calm-message" id="calm-txt"></div>
+                <div class="calm-message" id="calm-txt" style="font-weight:bold; color:#ffcc80;"></div>
                 <div class="link-grid">
                     <a href="https://www.youtube.com" target="_blank" class="portal-link">YouTube 🎬</a>
                     <a href="https://music.youtube.com" target="_blank" class="portal-link">YT Music 🎵</a>
@@ -180,10 +211,9 @@
         </div>
     </div>
 
-    <button class="cheat-btn" id="cheat-button">負能量注入<br>VOID ENERGY</button>
+    <button class="cheat-btn" id="cheat-button">VOID ENERGY<br>注入虛空能量</button>
 
     <script>
-        // JS 邏輯保持不變...
         const input = document.getElementById('trash-input');
         const btn = document.getElementById('burn-btn');
         const stage = document.querySelector('.black-hole-stage');
@@ -199,12 +229,12 @@
         const cheatBtn = document.getElementById('cheat-button');
 
         const calmPhrases = [
-            "「引力載荷已達 100%！黑洞已經被你的煩惱餵到吐了...🤮」",
-            "「黑洞表示：『嗝～今天吃了太多垃圾，需要休息一下。』🤫」",
-            "「爆炸了啦！現在是強迫休息時間，直接躺平吧！🛌」",
-            "「黑洞臨界點已到！丟夠多了，現在冷靜一下吧！🥲」",
-            "「快要爆炸了！黑洞表示消化不良...🤢」",
-            "「負能量已全數攪碎，選個傳送門休息一下吧！🤪」"
+            "「引力載荷已達 100%！黑洞已經被你的煩惱餵到吐了...🤮」<br><small>Gravity Load 100%! The Black Hole is literally sick of your worries...</small>",
+            "「黑洞表示：『嗝～今天吃了太多垃圾，需要休息一下。』🤫」<br><small>BH says: 'Burp~ Too much trash today. I need to digest somewhere else.'</small>",
+            "「爆炸了啦！現在是強迫休息時間，直接躺平吧！🛌」<br><small>Critical Overflow! It's mandatory rest time. Just lie down!</small>",
+            "「黑洞臨界點已到！丟夠多了，現在冷靜一下吧！🥲」<br><small>Event Horizon Reached! You've dumped enough trash. Go chill!</small>",
+            "「快要爆炸了！黑洞表示消化不良...🤢」<br><small>Warning: Indigestion! The Black Hole is about to explode...</small>",
+            "「負能量已全數攪碎，選個傳送門休息一下吧！🤪」<br><small>Negative energy crushed. Pick a portal and take a break!</small>"
         ];
 
         let countSwallowed = 0, countParticles = 0, currentLevel = 1, currentBhSize = 110;
@@ -225,15 +255,15 @@
                 currentLevel = targetLevel; currentBhSize += 6;
                 blackHoleCore.style.setProperty('--bh-size', `${currentBhSize}px`);
                 uiLevel.innerText = `LV. ${currentLevel}`;
-                const lvText = document.createElement('div'); lvText.className = 'level-up-text'; lvText.innerHTML = `進化！LV.${currentLevel}`; stage.appendChild(lvText);
+                const lvText = document.createElement('div'); lvText.className = 'level-up-text'; lvText.innerHTML = `進化！LV.${currentLevel}<small>BH EVOLVED!</small>`; stage.appendChild(lvText);
                 lvText.addEventListener('animationend', () => lvText.remove());
             }
         }
 
         function createParticles(color) {
-            for (let i = 0; i < 30; i++) {
-                const p = document.createElement('div'); p.className = 'particle'; p.style.backgroundColor = color;
-                const angle = Math.random() * Math.PI * 2, dist = 40 + Math.random() * 150;
+            for (let i = 0; i < 40; i++) {
+                const p = document.createElement('div'); p.className = 'particle'; p.style.backgroundColor = color; p.style.boxShadow = `0 0 10px ${color}`;
+                const angle = Math.random() * Math.PI * 2, dist = 40 + Math.random() * (currentBhSize * 1.2);
                 p.style.setProperty('--end-x', `${Math.cos(angle)*dist}px`); p.style.setProperty('--end-y', `${Math.sin(angle)*dist}px`);
                 stage.appendChild(p); p.addEventListener('animationend', () => p.remove());
             }
@@ -243,13 +273,14 @@
             if (currentLevel >= 25 || !input.value.trim()) return;
             const text = input.value.trim(); input.value = '';
             const node = document.createElement('div'); node.className = 'doom-text'; node.innerText = text;
-            const color = `hsl(${Math.floor(Math.random()*360)}, 80%, 70%)`; node.style.color = color;
-            const angle = Math.random()*Math.PI*2, dist = 200 + Math.random()*50;
+            const color = `hsl(${Math.floor(Math.random()*360)}, 95%, 70%)`; node.style.color = color; node.style.textShadow = `0 0 15px ${color}`;
+            const angle = Math.random()*Math.PI*2, dist = 220 + Math.random()*80;
             node.style.setProperty('--start-x', `${Math.cos(angle)*dist}px`); node.style.setProperty('--start-y', `${Math.sin(angle)*dist}px`);
+            node.style.setProperty('--start-rot', `${(Math.random()-0.5)*360}deg`);
             stage.appendChild(node);
             node.addEventListener('animationend', () => {
                 countSwallowed++; uiSwallowed.innerText = countSwallowed;
-                countParticles += 30; uiParticles.innerText = countParticles;
+                countParticles += 40; uiParticles.innerText = countParticles;
                 createParticles(color); triggerScreenShake(); pulseBlackHole(1.3, 100); checkLevelUp(); node.remove();
             });
         }
