@@ -32,26 +32,35 @@
             align-items: center;
             width: 100%;
             height: 100%;
-            padding-top: 140px; /* 電腦版 */
+            padding-top: 160px;
+            transition: all 0.3s;
+        }
+
+        @media (max-width: 600px) {
+            .shake-wrapper { padding-top: 135px !important; }
+            h1 { font-size: 1.4rem !important; }
+            h1 small { font-size: 0.7rem !important; }
+            .stats-panel { top: 10px !important; transform: scale(0.85) !important; }
+            .black-hole-stage { height: 280px !important; }
+            .action-btn { min-width: 140px !important; }
         }
 
         .stats-panel {
             position: absolute;
-            top: 20px;
+            top: 25px;
             display: flex;
-            gap: 15px;
-            background: rgba(255, 255, 255, 0.08);
-            padding: 10px 15px;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 25px;
             border-radius: 15px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             z-index: 100;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
-        .stat-item { text-align: center; font-size: 0.7rem; color: #888; text-transform: uppercase; }
-        .stat-item .cn-label { display: block; color: #aaa; font-size: 0.8rem; }
-        .stat-item span { display: block; font-size: 1.2rem; font-weight: bold; color: #a251f1; margin-top: 3px; }
+        .stat-item { text-align: center; font-size: 0.75rem; color: #888; }
+        .stat-item .cn-label { display: block; color: #aaa; font-size: 0.9rem; margin-bottom: 2px; }
+        .stat-item span { display: block; font-size: 1.4rem; font-weight: bold; color: #a251f1; text-shadow: 0 0 10px rgba(162, 81, 241, 0.5); }
 
         .container {
             position: relative;
@@ -61,48 +70,73 @@
             align-items: center;
             gap: 20px;
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
             padding: 0 20px;
         }
 
-        h1 {
-            font-size: 1.8rem;
-            text-align: center;
-            text-shadow: 0 0 15px rgba(255,255,255,0.7);
-            line-height: 1.3;
-        }
+        h1 { font-size: 1.8rem; text-align: center; text-shadow: 0 0 15px rgba(255,255,255,0.7); }
+        h1 small { display: block; font-size: 1rem; color: rgba(255, 255, 255, 0.3); margin-top: 8px; text-transform: uppercase; letter-spacing: 2px; }
 
-        h1 small {
-            display: block; font-size: 0.9rem; font-weight: bold;
-            color: rgba(255, 255, 255, 0.4); margin-top: 5px;
-            text-transform: uppercase; letter-spacing: 1px;
+        .input-group { 
+            display: flex; 
+            flex-direction: column; 
+            width: 100%; 
+            gap: 20px; 
+            align-items: center; 
         }
-
-        .input-group { display: flex; flex-direction: column; width: 100%; gap: 12px; align-items: center; }
 
         input[type="text"] {
-            width: 100%; padding: 12px 20px; border-radius: 30px;
+            width: 100%; max-width: 500px; padding: 15px 25px; border-radius: 35px;
             border: 1px solid #444; background: rgba(0, 0, 0, 0.6);
-            color: white; font-size: 1rem; outline: none; text-align: center;
+            color: white; font-size: 1.1rem; outline: none; text-align: center;
         }
 
-        button.action-btn {
-            min-width: 160px; padding: 10px 20px; border-radius: 25px;
-            border: none; background: linear-gradient(45deg, #5e00a3, #a251f1);
-            color: white; font-weight: bold; cursor: pointer;
+        .btn-row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .action-btn {
+            min-width: 170px; padding: 10px 25px; border-radius: 30px;
+            border: none; color: white; font-weight: bold; cursor: pointer;
             display: flex; flex-direction: column; align-items: center;
+            background: linear-gradient(45deg, #5e00a3, #a251f1);
+            transition: all 0.3s;
+            z-index: 2;
         }
-        button.action-btn .cn-btn { font-size: 1rem; }
-        button.action-btn .en-btn { font-size: 0.6rem; opacity: 0.8; }
+        .action-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px #a251f1; }
 
-        /* 手機版適配 */
-        @media (max-width: 600px) {
-            .shake-wrapper { padding-top: 100px !important; }
-            h1 { font-size: 1.4rem !important; }
-            h1 small { font-size: 0.7rem !important; }
-            .stats-panel { top: 15px; transform: scale(0.9); }
-            .black-hole-stage { height: 280px !important; }
+        .boom-trigger-btn {
+            position: absolute;
+            right: 0;
+            min-width: 80px; 
+            padding: 5px 12px; 
+            border-radius: 20px;
+            background: transparent;
+            border: 1px solid rgba(255, 69, 0, 0.2);
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.65rem; 
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s;
         }
+        .boom-trigger-btn:hover {
+            border-color: #ff4500;
+            background: rgba(255, 69, 0, 0.1);
+            color: #fff;
+            transform: translateX(3px);
+        }
+
+        .btn-en-main { font-size: 0.6rem; opacity: 0.8; text-transform: uppercase; }
+        .btn-en-boom { font-size: 0.5rem; opacity: 0.6; text-transform: uppercase; margin-left: 2px; }
 
         .black-hole-stage {
             position: relative; width: 100%; height: 350px;
@@ -119,62 +153,50 @@
             transition: all 0.4s ease-out;
         }
 
-        /* ✨ 特效重新歸位：華麗文字吞噬動畫 */
         .doom-text {
-            position: absolute;
-            font-size: 2rem;
-            font-weight: 900;
-            pointer-events: none;
-            white-space: nowrap;
-            z-index: 15;
-            animation: swallow 5.5s forwards cubic-bezier(0.25, 0.1, 0.25, 1);
+            position: absolute; font-size: 2.2rem; font-weight: 900;
+            pointer-events: none; white-space: nowrap; z-index: 15; 
+            animation: swallow 5.5s forwards cubic-bezier(0.25, 0.1, 0.25, 1); 
         }
 
         @keyframes swallow {
-            0% {
-                transform: translate(var(--start-x), var(--start-y)) rotate(var(--start-rot)) scale(1.2);
-                opacity: 0;
-                filter: blur(5px);
-            }
-            15% { opacity: 1; filter: blur(0px); }
-            50% {
-                transform: translate(calc(var(--start-x) * 0.35), calc(var(--start-y) * 0.35)) rotate(calc(var(--start-rot) + 720deg)) scale(1);
-                opacity: 1;
-            }
-            85% {
-                transform: translate(calc(var(--start-x) * 0.08), calc(var(--start-y) * 0.08)) rotate(calc(var(--start-rot) + 2160deg)) scale(0.6) skewX(20deg);
-                opacity: 0.9;
-                filter: blur(1px);
-            }
-            100% {
-                transform: translate(0, 0) rotate(calc(var(--start-rot) + 3600deg)) scale(0) skewX(45deg);
-                opacity: 0;
-                filter: blur(10px);
-            }
+            0% { transform: translate(var(--start-x), var(--start-y)) rotate(var(--start-rot)) scale(1.2); opacity: 0; }
+            12% { opacity: 1; }
+            50% { transform: translate(calc(var(--start-x) * 0.35), calc(var(--start-y) * 0.35)) rotate(calc(var(--start-rot) + 720deg)) scale(1); opacity: 1; }
+            85% { transform: translate(calc(var(--start-x) * 0.08), calc(var(--start-y) * 0.08)) rotate(calc(var(--start-rot) + 2160deg)) scale(0.6) skewX(20deg); opacity: 0.9; }
+            100% { transform: translate(0, 0) rotate(calc(var(--start-rot) + 3600deg)) scale(0) skewX(45deg); opacity: 0; }
         }
 
-        .particle { position: absolute; width: 5px; height: 5px; border-radius: 50%; z-index: 16; animation: particle-burst 0.9s forwards ease-out; }
-        @keyframes particle-burst { 0% { transform: translate(0,0) scale(1); opacity: 1; } 100% { transform: translate(var(--end-x), var(--end-y)) scale(0); opacity: 0; } }
+        .particle {
+            position: absolute; width: 6px; height: 6px; border-radius: 50%;
+            pointer-events: none; z-index: 16; animation: particle-burst 0.9s forwards ease-out;
+        }
+        @keyframes particle-burst { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--end-x), var(--end-y)) scale(0); opacity: 0; } }
 
-        .level-up-text { position: absolute; color: #fff; font-size: 1.8rem; font-weight: bold; text-shadow: 0 0 20px #ff007f; text-align: center; animation: float-up 1.5s forwards ease-out; z-index: 25; }
-        .level-up-text small { display: block; font-size: 0.8rem; opacity: 0.9; }
+        .level-up-text {
+            position: absolute; color: #fff; font-size: 1.8rem; font-weight: bold;
+            text-shadow: 0 0 20px #ff007f; text-align: center; animation: float-up 1.5s forwards ease-out; z-index: 50;
+        }
+        .level-up-text small { display: block; font-size: 0.8rem; opacity: 0.9; text-transform: uppercase; }
+
         @keyframes float-up { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 20% { transform: translateY(-30px) scale(1.2); opacity: 1; } 100% { transform: translateY(-90px) scale(0.8); opacity: 0; } }
 
         .calm-portal {
             display: none; flex-direction: column; align-items: center;
-            background: rgba(10, 10, 25, 0.95); border: 2px solid #ff007f;
-            padding: 20px; border-radius: 20px; width: 100%; gap: 15px;
-            backdrop-filter: blur(15px); animation: fadeIn 0.8s;
+            background: rgba(10, 10, 25, 0.9); border: 2px solid #ff007f;
+            padding: 25px; border-radius: 25px; width: 100%; gap: 20px;
+            backdrop-filter: blur(15px); animation: fadeIn 0.8s ease-out;
         }
-        .link-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
-        .portal-link { padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.05); color: #fff; text-decoration: none; font-size: 0.85rem; text-align: center; border: 1px solid rgba(255,255,255,0.1); font-weight: bold; }
-        .restart-btn { grid-column: span 2; padding: 12px; border-radius: 15px; background: linear-gradient(45deg, #00b4db, #0083b0); color: #fff; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; font-weight: bold; }
-        
-        .cheat-btn { position: absolute; bottom: 10px; right: 10px; background: rgba(138,43,226,0.1); color: rgba(255,255,255,0.3); border: 1px dashed rgba(255,255,255,0.2); padding: 5px; font-size: 10px; cursor: pointer; z-index: 50; }
-        
-        .apply-shake { animation: screen-shake 0.3s cubic-bezier(.36,.07,.19,.97); }
-        @keyframes screen-shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
-        @keyframes distort { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05) rotate(2deg); } }
+        .calm-message { font-size: 1.1rem; color: #ffcc80; font-weight: bold; line-height: 1.6; text-shadow: 0 0 10px rgba(255, 204, 128, 0.4); }
+        .calm-message small { display: block; font-size: 0.8rem; opacity: 0.9; margin-top: 5px; }
+
+        .link-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; }
+        .portal-link { padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.05); color: #fff; text-decoration: none; font-size: 0.9rem; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        .restart-btn { grid-column: span 2; padding: 12px; border-radius: 15px; background: linear-gradient(45deg, #00b4db, #0083b0); color: white; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+        .restart-btn small { font-size: 0.7rem; opacity: 0.9; text-transform: uppercase; }
+
+        .apply-shake { animation: screen-shake 0.3s both; }
+        @keyframes screen-shake { 0% { transform: translate(0,0); } 25% { transform: translate(6px,6px); } 50% { transform: translate(-6px,-6px); } 100% { transform: translate(0,0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -182,22 +204,32 @@
 
     <div class="shake-wrapper" id="screen">
         <div class="stats-panel">
-            <div class="stat-item"><div class="cn-label">等級</div>LVL<span id="bh-level">LV. 1</span></div>
+            <div class="stat-item"><div class="cn-label">黑洞等級</div>LEVEL<span id="bh-level">LV. 1</span></div>
             <div class="stat-item"><div class="cn-label">已消滅</div>ABSORBED<span id="total-swallowed">0</span></div>
             <div class="stat-item"><div class="cn-label">碎屑</div>STARDUST<span id="total-particles">0</span></div>
         </div>
 
         <div class="container">
-            <div id="normal-input-zone" style="width: 100%; display: flex; flex-direction: column; gap: 15px;">
+            <div id="normal-input-zone" style="width: 100%; text-align: center; display: flex; flex-direction: column; gap: 20px;">
                 <h1>把一切煩惱，化為星塵徹底攪碎<small>Crush worries into cosmic stardust</small></h1>
+                
                 <div class="input-group">
                     <input type="text" id="trash-input" placeholder="輸入你想消除的東西... / Enter worries..." maxlength="20">
-                    <button id="burn-btn" class="action-btn"><span class="cn-btn">開始吞噬</span><span class="en-btn">Initiate Swallowing</span></button>
+                    
+                    <div class="btn-row">
+                        <button id="burn-btn" class="action-btn">
+                            <span>開始吞噬</span><span class="btn-en-main">Initiate Swallowing</span>
+                        </button>
+                        
+                        <button id="boom-btn" class="boom-trigger-btn">
+                            💥 負能量爆炸<span class="btn-en-boom">VOID BOOM</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <div id="portal-zone" class="calm-portal">
-                <div class="calm-message" id="calm-txt" style="font-weight:bold; color:#ffcc80;"></div>
+                <div class="calm-message" id="calm-txt"></div>
                 <div class="link-grid">
                     <a href="https://www.youtube.com" target="_blank" class="portal-link">YouTube 🎬</a>
                     <a href="https://music.youtube.com" target="_blank" class="portal-link">YT Music 🎵</a>
@@ -211,30 +243,20 @@
         </div>
     </div>
 
-    <button class="cheat-btn" id="cheat-button">VOID ENERGY<br>注入虛空能量</button>
-
     <script>
-        const input = document.getElementById('trash-input');
-        const btn = document.getElementById('burn-btn');
-        const stage = document.querySelector('.black-hole-stage');
-        const screen = document.getElementById('screen');
-        const blackHoleCore = document.getElementById('bh-core');
-        const uiLevel = document.getElementById('bh-level');
-        const uiSwallowed = document.getElementById('total-swallowed');
-        const uiParticles = document.getElementById('total-particles');
-        const inputZone = document.getElementById('normal-input-zone');
-        const portalZone = document.getElementById('portal-zone');
-        const calmTxt = document.getElementById('calm-txt');
-        const resetBtn = document.getElementById('reset-btn');
-        const cheatBtn = document.getElementById('cheat-button');
+        const input = document.getElementById('trash-input'), btn = document.getElementById('burn-btn'), boomBtn = document.getElementById('boom-btn');
+        const stage = document.querySelector('.black-hole-stage'), screen = document.getElementById('screen'), blackHoleCore = document.getElementById('bh-core');
+        const uiLevel = document.getElementById('bh-level'), uiSwallowed = document.getElementById('total-swallowed'), uiParticles = document.getElementById('total-particles');
+        const inputZone = document.getElementById('normal-input-zone'), portalZone = document.getElementById('portal-zone'), calmTxt = document.getElementById('calm-txt'), resetBtn = document.getElementById('reset-btn');
 
+        // ✨ 補回結局英文詞彙庫
         const calmPhrases = [
-            "「引力載荷已達 100%！黑洞已經被你的煩惱餵到吐了...🤮」<br><small>Gravity Load 100%! The Black Hole is literally sick of your worries...</small>",
-            "「黑洞表示：『嗝～今天吃了太多垃圾，需要休息一下。』🤫」<br><small>BH says: 'Burp~ Too much trash today. I need to digest somewhere else.'</small>",
-            "「爆炸了啦！現在是強迫休息時間，直接躺平吧！🛌」<br><small>Critical Overflow! It's mandatory rest time. Just lie down!</small>",
-            "「黑洞臨界點已到！丟夠多了，現在冷靜一下吧！🥲」<br><small>Event Horizon Reached! You've dumped enough trash. Go chill!</small>",
-            "「快要爆炸了！黑洞表示消化不良...🤢」<br><small>Warning: Indigestion! The Black Hole is about to explode...</small>",
-            "「負能量已全數攪碎，選個傳送門休息一下吧！🤪」<br><small>Negative energy crushed. Pick a portal and take a break!</small>"
+            "「引力載荷已達 100%！黑洞已經被你的煩惱餵到吐了...🤮」<small>Gravity Load 100%! The Black Hole is sick of your worries...</small>",
+            "「黑洞表示：『嗝～今天吃了太多垃圾，需要休息一下。』🤫」<small>BH says: 'Burp~ Too much trash today. I need to digest.'</small>",
+            "「爆炸了啦！現在是強迫休息時間，直接躺平吧！🛌」<small>Critical Overflow! It's mandatory rest time. Just lie down!</small>",
+            "「黑洞臨界點已到！現在冷靜一下吧！🥲」<small>Event Horizon Reached! Go chill!</small>",
+            "「快要爆炸了！黑洞表示消化不良...🤢」<small>Warning: Indigestion! The Black Hole is about to explode...</small>",
+            "「負能量已全數攪碎，選個傳送門休息一下吧！🤪」<small>Negative energy crushed. Take a break!</small>"
         ];
 
         let countSwallowed = 0, countParticles = 0, currentLevel = 1, currentBhSize = 110;
@@ -248,33 +270,43 @@
             if (targetLevel >= 25) {
                 currentLevel = 25; currentBhSize = 250; blackHoleCore.style.setProperty('--bh-size', `250px`);
                 uiLevel.innerText = `LV. 25 (MAX)`;
-                setTimeout(() => { inputZone.style.display = 'none'; portalZone.style.display = 'flex'; calmTxt.innerHTML = calmPhrases[Math.floor(Math.random()*6)]; }, 800);
+                setTimeout(() => { 
+                    inputZone.style.display = 'none'; 
+                    portalZone.style.display = 'flex'; 
+                    calmTxt.innerHTML = calmPhrases[Math.floor(Math.random()*calmPhrases.length)]; 
+                }, 800);
                 return;
             }
             if (targetLevel > currentLevel) {
                 currentLevel = targetLevel; currentBhSize += 6;
                 blackHoleCore.style.setProperty('--bh-size', `${currentBhSize}px`);
                 uiLevel.innerText = `LV. ${currentLevel}`;
-                const lvText = document.createElement('div'); lvText.className = 'level-up-text'; lvText.innerHTML = `進化！LV.${currentLevel}<small>BH EVOLVED!</small>`; stage.appendChild(lvText);
+                
+                // ✨ 補回升級英文文字
+                const lvText = document.createElement('div'); 
+                lvText.className = 'level-up-text'; 
+                lvText.innerHTML = `進化！LV.${currentLevel}<small>BH EVOLVED!</small>`; 
+                stage.appendChild(lvText);
                 lvText.addEventListener('animationend', () => lvText.remove());
             }
         }
 
-        function createParticles(color) {
-            for (let i = 0; i < 40; i++) {
-                const p = document.createElement('div'); p.className = 'particle'; p.style.backgroundColor = color; p.style.boxShadow = `0 0 10px ${color}`;
-                const angle = Math.random() * Math.PI * 2, dist = 40 + Math.random() * (currentBhSize * 1.2);
+        function createParticles(color, count = 40) {
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div'); p.className = 'particle'; p.style.backgroundColor = color;
+                const angle = Math.random() * Math.PI * 2, dist = 40 + Math.random() * (currentBhSize * 1.3);
                 p.style.setProperty('--end-x', `${Math.cos(angle)*dist}px`); p.style.setProperty('--end-y', `${Math.sin(angle)*dist}px`);
                 stage.appendChild(p); p.addEventListener('animationend', () => p.remove());
             }
         }
 
         function sendToBlackHole() {
-            if (currentLevel >= 25 || !input.value.trim()) return;
-            const text = input.value.trim(); input.value = '';
+            const text = input.value.trim();
+            if (currentLevel >= 25 || !text) return;
+            input.value = '';
             const node = document.createElement('div'); node.className = 'doom-text'; node.innerText = text;
-            const color = `hsl(${Math.floor(Math.random()*360)}, 95%, 70%)`; node.style.color = color; node.style.textShadow = `0 0 15px ${color}`;
-            const angle = Math.random()*Math.PI*2, dist = 220 + Math.random()*80;
+            const color = `hsl(${Math.floor(Math.random()*360)}, 95%, 65%)`; node.style.color = color;
+            const angle = Math.random()*Math.PI*2, dist = 220 + Math.random()*100;
             node.style.setProperty('--start-x', `${Math.cos(angle)*dist}px`); node.style.setProperty('--start-y', `${Math.sin(angle)*dist}px`);
             node.style.setProperty('--start-rot', `${(Math.random()-0.5)*360}deg`);
             stage.appendChild(node);
@@ -285,9 +317,18 @@
             });
         }
 
+        boomBtn.addEventListener('click', () => {
+            if (currentLevel >= 25) return;
+            countSwallowed = 125; uiSwallowed.innerText = countSwallowed;
+            countParticles += 800; uiParticles.innerText = countParticles;
+            triggerScreenShake();
+            pulseBlackHole(2.8, 600);
+            createParticles('#ff4500', 250); 
+            setTimeout(checkLevelUp, 300);
+        });
+
         btn.addEventListener('click', sendToBlackHole);
         input.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendToBlackHole(); });
-        cheatBtn.addEventListener('click', () => { countSwallowed += 25; checkLevelUp(); triggerScreenShake(); createParticles('#8a2be2'); });
         resetBtn.addEventListener('click', () => { location.reload(); });
     </script>
 </body>
