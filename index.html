@@ -240,9 +240,9 @@
             <div id="portal-zone" class="calm-portal">
                 <div class="calm-message" id="calm-txt"></div>
                 <div class="link-grid">
-                    <a href="youtube://" id="yt-link" class="portal-link">YouTube 🎬</a>
-                    <a href="youtubemusic://" id="ytm-link" class="portal-link">YT Music 🎵</a>
-                    <a href="nflx://" id="nf-link" class="portal-link">Netflix 🍿</a>
+                    <a href="https://www.youtube.com" id="yt-link" class="portal-link">YouTube 🎬</a>
+                    <a href="https://music.youtube.com" id="ytm-link" class="portal-link">YT Music 🎵</a>
+                    <a href="https://www.netflix.com" id="nf-link" class="portal-link">Netflix 🍿</a>
                     <a href="kkbox://" id="kk-link" class="portal-link">KKBOX 🎧</a>
                     <button class="restart-btn" id="reset-btn"><span>讓宇宙重開機</span><small>REBOOT UNIVERSE</small></button>
                 </div>
@@ -263,19 +263,26 @@
             const links = {
                 "yt-link": { app: "youtube://", web: "https://www.youtube.com" },
                 "ytm-link": { app: "youtubemusic://", web: "https://music.youtube.com" },
-                "nf-link": { app: "nflx://", web: "https://www.netflix.com" },
+                "nf-link": { app: "nflx://www.netflix.com/browse", web: "https://www.netflix.com" },
                 "kk-link": { app: "kkbox://", web: "https://www.kkbox.com" }
             };
 
             Object.keys(links).forEach(id => {
-                document.getElementById(id).onclick = function(e) {
-                    e.preventDefault();
+                const el = document.getElementById(id);
+                el.onclick = function(e) {
                     const target = links[id];
+                    
+                    // YouTube 類建議直接用網頁網址，因為現代系統會自動彈出「是否用 App 打開」
+                    if (id === "yt-link" || id === "ytm-link") return true; 
+
+                    e.preventDefault();
                     const start = Date.now();
-                    window.location.href = target.app;
+                    window.location.href = target.app; // 嘗試喚起協定
+                    
+                    // 備援方案：如果 0.8 秒內沒離開網頁，跳轉回網頁版
                     setTimeout(() => {
-                        if (Date.now() - start < 2000) window.location.href = target.web;
-                    }, 500);
+                        if (Date.now() - start < 1500) window.location.href = target.web;
+                    }, 800);
                 };
             });
         }
