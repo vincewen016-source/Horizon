@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心靈除噪器：黑洞臨界點 | Soul Denoiser: Event Horizon</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #05050a;
+            color: #fff;
+            font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            perspective: 2000px;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px);
+            background-size: 550px 550px;
+            opacity: 0.15; 
+            z-index: 0;
+        }
+
+        .shake-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; 
+            width: 100%;
+            height: 100%;
+            padding-top: 140px; 
+        }
+
+        .stats-panel {
+            position: absolute;
+            top: 25px;
+            display: flex;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 30; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .stat-item {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-item .cn-label { display: block; color: #aaa; font-size: 0.9rem; margin-bottom: 2px; }
+
+        .stat-item span {
+            display: block;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #a251f1;
+            text-shadow: 0 0 10px rgba(162, 81, 241, 0.5);
+            transition: transform 0.2s, color 0.2s;
+            margin-top: 5px;
+        }
+
+        .container {
+            position: relative;
+            z-index: 20; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px; 
+            width: 100%;
+            max-width: 650px; 
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(255,255,255,0.7);
+            line-height: 1.2;
+        }
+
+        h1 small {
+            display: block;
+            font-size: 1.1rem; 
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column; 
+            width: 100%;
+            gap: 15px;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            max-width: 500px;
+            padding: 15px 25px;
+            border-radius: 35px;
+            border: 1px solid #444;
+            background: rgba(0, 0, 0, 0.6); 
+            color: white;
+            font-size: 1.1rem;
+            outline: none;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        input[type="text"]:focus {
+            border-color: #a251f1;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        button.action-btn {
+            width: auto; 
+            min-width: 180px; 
+            padding: 10px 25px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(45deg, #5e00a3, #a251f1);
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button.action-btn .cn-btn { font-size: 1rem; }
+        button.action-btn .en-btn { font-size: 0.6rem; opacity: 0.8; text-transform: uppercase; margin-top: 2px; }
+
+        button.action-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 15px rgba(138, 43, 226, 0.5);
+        }
+
+        /* 終局冷靜傳送門面板 */
+        .calm-portal {
+            display: none; 
+            flex-direction: column;
+            align-items: center;
+            background: rgba(10, 10, 25, 0.85);
+            border: 2px solid #ff007f;
+            box-shadow: 0 0 30px rgba(255, 0, 127, 0.4);
+            padding: 25px;
+            border-radius: 25px;
+            width: 100%;
+            max-width: 550px;
+            text-align: center;
+            gap: 20px;
+            backdrop-filter: blur(15px);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .calm-message {
+            font-size: 1.1rem;
+            color: #ffcc80;
+            line-height: 1.6;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 204, 128, 0.4);
+        }
+
+        .link-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            width: 100%;
+        }
+
+        .portal-link {
+            padding: 12px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .portal-link:hover {
+            background: rgba(255,255,255,0.15);
+            transform: scale(1.03);
+        }
+
+        /* ✨ 修正：重開機按鈕精緻化與字體加大 */
+        .restart-btn {
+            grid-column: span 2;
+            width: auto;
+            min-width: 220px;
+            justify-self: center; /* 在網格中居中 */
+            padding: 12px 30px;
+            border-radius: 20px;
+            border: none;
+            background: linear-gradient(45deg, #00b4db, #0083b0);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .restart-btn span { font-size: 1rem; }
+        .restart-btn small { 
+            font-size: 0.8rem; /* 加大英文 */
+            opacity: 0.9; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,180,219,0.5);
+        }
+
+        .black-hole-stage {
+            position: relative; 
+            width: 100%;
+            height: 320px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .black-hole {
+            width: var(--bh-size, 110px);
+            height: var(--bh-size, 110px);
+            background: #000000; 
+            border-radius: 50%;
+            box-shadow: 
+                0 0 0 4px #000000,                     
+                0 0 12px 3px rgba(255, 87, 34, 0.9),   
+                0 0 calc(var(--bh-size, 110px) * 0.3) calc(var(--bh-size, 110px) * 0.1) #5e00a3,                 
+                0 0 calc(var(--bh-size, 110px) * 0.7) calc(var(--bh-size, 110px) * 0.3) rgba(255, 69, 0, 0.4);   
+            animation: distort 5s infinite linear;
+            transition: width 0.4s ease-out, height 0.4s ease-out, transform 0.1s ease-out;
+        }
+
+        .cheat-btn {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(138, 43, 226, 0.15);
+            border: 1px dashed rgba(138, 43, 226, 0.4);
+            color: rgba(255, 255, 255, 0.4);
+            padding: 5px 12px;
+            font-size: 0.7rem;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 40;
+            transition: all 0.2s;
+            text-align: right;
+        }
+
+        .doom-text {
+            position: absolute;
+            font-size: 2.5rem; 
+            font-weight: 900;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 15; 
+            animation: swallow 5.5s forwards cubic-bezier(0.25, 0.1, 0.25, 1); 
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 16; 
+            animation: particle-burst 0.9s forwards ease-out;
+        }
+
+        .level-up-text {
+            position: absolute;
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-shadow: 0 0 20px #ff007f, 0 0 5px white;
+            z-index: 25;
+            pointer-events: none;
+            text-align: center;
+            animation: float-up 1.5s forwards ease-out;
+        }
+        .level-up-text small { display: block; font-size: 0.8rem; opacity: 0.9; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes distort { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05) rotate(2deg); } }
+        @keyframes swallow {
+            0% { transform: translate(var(--start-x), var(--start-y)) rotate(var(--start-rot)) scale(1.2); opacity: 0; filter: blur(5px); }
+            12% { opacity: 1; filter: blur(0px); }
+            50% { transform: translate(calc(var(--start-x) * 0.35), calc(var(--start-y) * 0.35)) rotate(calc(var(--start-rot) + 720deg)) scale(1); opacity: 1; }
+            85% { transform: translate(calc(var(--start-x) * 0.08), calc(var(--start-y) * 0.08)) rotate(calc(var(--start-rot) + 2160deg)) scale(0.6) skewX(20deg); opacity: 0.9; filter: blur(1px); }
+            100% { transform: translate(0, 0) rotate(calc(var(--start-rot) + 3600deg)) scale(0) skewX(45deg); opacity: 0; filter: blur(10px); }
+        }
+        @keyframes particle-burst { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--end-x), var(--end-y)) scale(0); opacity: 0; } }
+        @keyframes float-up { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 20% { transform: translateY(-30px) scale(1.2); opacity: 1; } 80% { transform: translateY(-60px) scale(1); opacity: 1; } 100% { transform: translateY(-90px) scale(0.8); opacity: 0; } }
+        .apply-shake { animation: screen-shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes screen-shake { 10%, 90% { transform: translate3d(-1px, -1px, 0); } 20%, 80% { transform: translate3d(3px, 2px, 0); } 30%, 50%, 70% { transform: translate3d(-5px, -4px, 0); } 40%, 60% { transform: translate3d(5px, 4px, 0); } }
+        .pop-effect { transform: scale(1.3); color: #ffeb3b !important; }
+    </style>
+</head>
+<body>
+
+    <div class="shake-wrapper" id="screen">
+        <div class="stats-panel">
+            <div class="stat-item">
+                <div class="cn-label">黑洞等級</div>
+                LEVEL
+                <span id="bh-level">LV. 1</span>
+            </div>
+            <div class="stat-item">
+                <div class="cn-label">已消滅煩惱</div>
+                ABSORBED
+                <span id="total-swallowed">0</span>
+            </div>
+            <div class="stat-item">
+                <div class="cn-label">累積星塵碎屑</div>
+                STARDUST
+                <span id="total-particles">0</span>
+            </div>
+        </div>
+
+        <div class="container">
+            <div id="normal-input-zone" style="width: 100%; text-align: center; display: flex; flex-direction: column; gap: 20px;">
+                <h1>把一切煩惱，化為星塵徹底攪碎
+                    <small>Crush your worries into cosmic stardust</small>
+                </h1>
+                <div class="input-group">
+                    <input type="text" id="trash-input" placeholder="輸入你想消除的東西... / Enter your worries..." maxlength="20">
+                    <button id="burn-btn" class="action-btn">
+                        <span class="cn-btn">開始吞噬</span>
+                        <span class="en-btn">Initiate Swallowing</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="portal-zone" class="calm-portal">
+                <div class="calm-message" id="calm-txt"></div>
+                <div class="link-grid">
+                    <a href="https://www.youtube.com" target="_blank" class="portal-link yt">YouTube 🎬</a>
+                    <a href="https://music.youtube.com" target="_blank" class="portal-link ytm">YouTube Music 🎵</a>
+                    <a href="https://www.netflix.com" target="_blank" class="portal-link nf">Netflix 🍿</a>
+                    <a href="https://www.kkbox.com" target="_blank" class="portal-link kk">KKBOX 🎧</a>
+                    <button class="restart-btn" id="reset-btn">
+                        <span>讓宇宙重開機（重新開始）</span>
+                        <small>Reboot Universe (Restart)</small>
+                    </button>
+                </div>
+            </div>
+
+            <div class="black-hole-stage">
+                <div class="black-hole" id="bh-core"></div>
+            </div>
+        </div>
+    </div>
+
+    <button class="cheat-btn" id="cheat-button">
+        注入虛空能量 (+5等)<br>Inject Void Energy (+5 LVL)
+    </button>
+
+    <script>
+        const input = document.getElementById('trash-input');
+        const btn = document.getElementById('burn-btn');
+        const stage = document.querySelector('.black-hole-stage');
+        const screen = document.getElementById('screen');
+        const blackHoleCore = document.getElementById('bh-core');
+        const uiLevel = document.getElementById('bh-level');
+        const uiSwallowed = document.getElementById('total-swallowed');
+        const uiParticles = document.getElementById('total-particles');
+        const inputZone = document.getElementById('normal-input-zone');
+        const portalZone = document.getElementById('portal-zone');
+        const calmTxt = document.getElementById('calm-txt');
+        const resetBtn = document.getElementById('reset-btn');
+        const cheatBtn = document.getElementById('cheat-button');
+
+        const calmPhrases = [
+            "「引力載荷已達 100%！黑洞已經被你的煩惱餵到吐了......🤮」<br><small>Gravity Load 100%! The Black Hole is literally sick of your worries...</small>",
+            "「黑洞表示：『嗝～今天吃了太多垃圾，需要去旁邊消化一下。』🤫」<br><small>BH says: 'Burp~ Too much trash today. I need to digest somewhere else.'</small>",
+            "「爆炸了啦！現在是強迫休息時間，直接躺平吧！🛌」<br><small>Critical Overflow! It's mandatory rest time. Just lie down!</small>",
+            "「黑洞已達到臨界點！你今天丟得夠多垃圾了，現在冷靜一下吧！🥲」<br><small>Event Horizon Reached! You've dumped enough trash. Go chill!</small>",
+            "「快要爆炸了！黑洞表示消化不良......🤢」<br><small>Warning: Indigestion! The Black Hole is about to explode...</small>",
+            "「宇宙的負能量已被全數攪碎，選個傳送門休息一下吧！🤪」<br><small>Negative energy crushed. Pick a portal and take a break!</small>"
+        ];
+
+        let countSwallowed = 0;
+        let countParticles = 0;
+        let currentLevel = 1;
+        let currentBhSize = 110; 
+
+        blackHoleCore.style.setProperty('--bh-size', `${currentBhSize}px`);
+
+        function triggerScreenShake() {
+            screen.classList.remove('apply-shake');
+            void screen.offsetWidth; 
+            screen.classList.add('apply-shake');
+        }
+
+        function pulseBlackHole(scale, duration) {
+            blackHoleCore.style.transform = `scale(${scale})`;
+            setTimeout(() => { blackHoleCore.style.transform = 'scale(1)'; }, duration);
+        }
+
+        function triggerStatPop(element) {
+            element.classList.add('pop-effect');
+            setTimeout(() => element.classList.remove('pop-effect'), 200);
+        }
+
+        function checkLevelUp() {
+            let targetLevel = Math.floor(countSwallowed / 5) + 1;
+            if (targetLevel >= 25) {
+                currentLevel = 25;
+                currentBhSize = 250; 
+                blackHoleCore.style.setProperty('--bh-size', `${currentBhSize}px`);
+                uiLevel.innerText = `LV. 25 (MAX)`;
+                uiLevel.style.color = '#ff007f';
+                triggerStatPop(uiLevel);
+                setTimeout(triggerFinalPortal, 800);
+                return;
+            }
+
+            if (targetLevel > currentLevel) {
+                currentLevel = targetLevel;
+                currentBhSize = 110 + (currentLevel - 1) * 5.8; 
+                blackHoleCore.style.setProperty('--bh-size', `${currentBhSize}px`);
+                uiLevel.innerText = `LV. ${currentLevel}`;
+                uiLevel.style.color = '#ff007f';
+                triggerStatPop(uiLevel);
+
+                const lvText = document.createElement('div');
+                lvText.classList.add('level-up-text');
+                lvText.innerHTML = `黑洞進化！LV.${currentLevel}<small>BH EVOLVED!</small>`;
+                stage.appendChild(lvText);
+                lvText.addEventListener('animationend', () => lvText.remove());
+            }
+        }
+
+        function triggerFinalPortal() {
+            inputZone.style.display = 'none'; 
+            cheatBtn.style.display = 'none'; 
+            const randomPhrase = calmPhrases[Math.floor(Math.random() * calmPhrases.length)];
+            calmTxt.innerHTML = randomPhrase;
+            portalZone.style.display = 'flex'; 
+            const maxText = document.createElement('div');
+            maxText.classList.add('level-up-text');
+            maxText.innerHTML = `引力到達臨界點！<small>CRITICAL MASS REACHED</small>`;
+            maxText.style.textShadow = `0 0 20px #ff4500, 0 0 5px white`;
+            stage.appendChild(maxText);
+            maxText.addEventListener('animationend', () => maxText.remove());
+        }
+
+        function createParticles(color) {
+            const particleCount = 40; 
+            countParticles += particleCount;
+            uiParticles.innerText = countParticles;
+            triggerStatPop(uiParticles);
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.backgroundColor = color;
+                particle.style.boxShadow = `0 0 10px ${color}`;
+                const angle = Math.random() * Math.PI * 2; 
+                const distance = 40 + Math.random() * (currentBhSize * 1.3); 
+                const endX = Math.cos(angle) * distance;
+                const endY = Math.sin(angle) * distance;
+                particle.style.setProperty('--end-x', `${endX}px`);
+                particle.style.setProperty('--end-y', `${endY}px`);
+                particle.style.animationDuration = `${0.3 + Math.random() * 0.5}s`;
+                stage.appendChild(particle);
+                particle.addEventListener('animationend', () => particle.remove());
+            }
+        }
+
+        function sendToBlackHole() {
+            if (currentLevel >= 25) return;
+            const text = input.value.trim();
+            if (!text) return; 
+            pulseBlackHole(0.8, 120);
+            const textNode = document.createElement('div');
+            textNode.classList.add('doom-text');
+            textNode.innerText = text;
+            const randomColor = `hsl(${Math.floor(Math.random() * 360)}, 95%, 65%)`;
+            textNode.style.color = randomColor; 
+            textNode.style.textShadow = `0 0 15px ${randomColor}, 0 0 5px white`;
+            const angle = Math.random() * Math.PI * 2; 
+            const distance = 220 + Math.random() * 100; 
+            const startX = Math.cos(angle) * distance;
+            const startY = Math.sin(angle) * distance; 
+            const startRot = (Math.random() - 0.5) * 360;
+            textNode.style.setProperty('--start-x', `${startX}px`);
+            textNode.style.setProperty('--start-y', `${startY}px`);
+            textNode.style.setProperty('--start-rot', `${startRot}deg`);
+            stage.appendChild(textNode);
+            input.value = ''; 
+            textNode.addEventListener('animationend', () => {
+                countSwallowed++;
+                uiSwallowed.innerText = countSwallowed;
+                triggerStatPop(uiSwallowed);
+                createParticles(randomColor);
+                pulseBlackHole(1.3, 100);
+                triggerScreenShake();
+                checkLevelUp();
+                textNode.remove();
+            });
+        }
+
+        cheatBtn.addEventListener('click', () => {
+            if (currentLevel >= 25) return;
+            countSwallowed += 25;
+            uiSwallowed.innerText = countSwallowed;
+            triggerStatPop(uiSwallowed);
+            pulseBlackHole(1.4, 200);
+            triggerScreenShake();
+            createParticles('#8a2be2');
+            checkLevelUp();
+        });
+
+        resetBtn.addEventListener('click', () => {
+            countSwallowed = 0; countParticles = 0; currentLevel = 1; currentBhSize = 110;
+            uiLevel.innerText = "LV. 1"; uiLevel.style.color = "#a251f1";
+            uiSwallowed.innerText = "0"; uiParticles.innerText = "0";
+            blackHoleCore.style.setProperty('--bh-size', `${currentBhSize}px`);
+            portalZone.style.display = 'none'; inputZone.style.display = 'flex'; cheatBtn.style.display = 'block'; input.value = '';
+        });
+
+        btn.addEventListener('click', sendToBlackHole);
+        input.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendToBlackHole(); });
+    </script>
+</body>
+</html>
