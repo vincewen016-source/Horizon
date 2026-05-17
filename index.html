@@ -240,10 +240,10 @@
             <div id="portal-zone" class="calm-portal">
                 <div class="calm-message" id="calm-txt"></div>
                 <div class="link-grid">
-                    <a href="https://www.youtube.com" target="_blank" class="portal-link">YouTube 🎬</a>
-                    <a href="https://music.youtube.com" target="_blank" class="portal-link">YT Music 🎵</a>
-                    <a href="https://www.netflix.com" target="_blank" class="portal-link">Netflix 🍿</a>
-                    <a href="https://www.kkbox.com" target="_blank" class="portal-link">KKBOX 🎧</a>
+                    <a href="youtube://" id="yt-link" class="portal-link">YouTube 🎬</a>
+                    <a href="youtubemusic://" id="ytm-link" class="portal-link">YT Music 🎵</a>
+                    <a href="nflx://" id="nf-link" class="portal-link">Netflix 🍿</a>
+                    <a href="kkbox://" id="kk-link" class="portal-link">KKBOX 🎧</a>
                     <button class="restart-btn" id="reset-btn"><span>讓宇宙重開機</span><small>REBOOT UNIVERSE</small></button>
                 </div>
             </div>
@@ -257,7 +257,29 @@
         const stage = document.querySelector('.black-hole-stage'), screen = document.getElementById('screen'), blackHoleCore = document.getElementById('bh-core');
         const uiLevel = document.getElementById('bh-level'), uiSwallowed = document.getElementById('total-swallowed'), uiParticles = document.getElementById('total-particles');
         const inputZone = document.getElementById('normal-input-zone'), portalZone = document.getElementById('portal-zone'), calmTxt = document.getElementById('calm-txt'), resetBtn = document.getElementById('reset-btn');
+        
+        // ✨ 備援連結處理 (如果 App 沒裝，跳轉回網頁)
+        function setupSmartLinks() {
+            const links = {
+                "yt-link": { app: "youtube://", web: "https://www.youtube.com" },
+                "ytm-link": { app: "youtubemusic://", web: "https://music.youtube.com" },
+                "nf-link": { app: "nflx://", web: "https://www.netflix.com" },
+                "kk-link": { app: "kkbox://", web: "https://www.kkbox.com" }
+            };
 
+            Object.keys(links).forEach(id => {
+                document.getElementById(id).onclick = function(e) {
+                    e.preventDefault();
+                    const target = links[id];
+                    const start = Date.now();
+                    window.location.href = target.app;
+                    setTimeout(() => {
+                        if (Date.now() - start < 2000) window.location.href = target.web;
+                    }, 500);
+                };
+            });
+        }
+        setupSmartLinks();
         const calmPhrases = [
             "「引力載荷已達 100%！黑洞已經被你的煩惱餵到吐了...🤮」<small>Gravity Load 100%! The Black Hole is sick of your worries...</small>",
             "「黑洞表示：『嗝～今天吃了太多垃圾，需要休息一下。』🤫」<small>BH says: 'Burp~ Too much trash today. I need to digest.'</small>",
